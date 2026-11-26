@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#7c55d9">
+<title>Nos Nard Music</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{
+ --bg:#f6f2ff;--surface:#fff;--surface2:#eee7ff;--text:#24183b;--muted:#887a9f;
+ --accent:#8156db;--accent2:#b18aff;--line:rgba(104,75,155,.13);--shadow:0 12px 34px rgba(82,54,140,.11);
+}
+[data-theme="dark"]{
+ --bg:#171221;--surface:#241b34;--surface2:#342449;--text:#f5edff;--muted:#b4a4cc;
+ --accent:#b18aff;--accent2:#d0b5ff;--line:rgba(220,195,255,.12);--shadow:0 12px 34px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;transition:background .25s,color .25s}
+button,input{font:inherit}
+button{border:0;cursor:pointer;color:inherit}
+.app{max-width:720px;margin:auto;min-height:100vh;padding:18px 16px 130px}
+.top{display:flex;align-items:center;justify-content:space-between;margin:5px 0 25px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:46px;height:46px;border-radius:16px;background:linear-gradient(135deg,#a78bfa,#7545d1);display:grid;place-items:center;color:white;box-shadow:0 7px 20px #8759d944}
+.brand h1{font-size:18px;margin:0;font-weight:800;letter-spacing:-.4px}
+.brand small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.iconbtn{width:42px;height:42px;border-radius:15px;background:var(--surface);box-shadow:var(--shadow);display:grid;place-items:center;font-size:18px}
+.hero{position:relative;overflow:hidden;border-radius:28px;padding:23px 22px;background:linear-gradient(135deg,#8052d7,#a77be9 60%,#c7a8ff);color:white;box-shadow:0 18px 35px #8759d933;margin-bottom:22px}
+.hero:after{content:"♫";position:absolute;right:16px;bottom:-42px;font-size:150px;opacity:.12;transform:rotate(-15deg)}
+.hero .tag{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;opacity:.82}
+.hero h2{font-size:26px;letter-spacing:-.7px;margin:10px 0 8px;max-width:300px}
+.hero p{font-size:13px;line-height:1.5;opacity:.9;margin:0 0 17px;max-width:290px}
+.upload{background:white;color:#7545d1;padding:12px 16px;border-radius:14px;font-weight:750;display:inline-flex;align-items:center;gap:8px;position:relative;z-index:1}
+.sectionhead{display:flex;align-items:center;justify-content:space-between;margin:22px 2px 13px}
+.sectionhead h3{font-size:16px;margin:0}
+.sectionhead span{font-size:12px;color:var(--muted)}
+.search{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:13px 15px;color:var(--text);outline:none;margin-bottom:12px}
+.search:focus{border-color:var(--accent)}
+.tabs{display:flex;gap:8px;margin:0 0 14px}
+.tab{background:var(--surface2);padding:9px 13px;border-radius:12px;color:var(--muted);font-size:12px;font-weight:650}
+.tab.active{background:var(--accent);color:white}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:22px;padding:30px 20px;text-align:center;color:var(--muted)}
+.empty .musicicon{width:62px;height:62px;border-radius:22px;background:var(--surface2);display:grid;place-items:center;margin:0 auto 13px;font-size:25px;color:var(--accent)}
+.empty strong{display:block;color:var(--text);margin-bottom:6px}
+.track{display:flex;align-items:center;gap:12px;padding:11px;background:var(--surface);border:1px solid var(--line);border-radius:18px;margin-bottom:9px;transition:transform .15s}
+.track:active{transform:scale(.99)}
+.cover{width:49px;height:49px;flex-shrink:0;border-radius:15px;background:linear-gradient(145deg,#d5baff,#8b61d9);display:grid;place-items:center;color:white;font-size:19px}
+.trackinfo{flex:1;min-width:0}
+.trackinfo strong,.trackinfo small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trackinfo strong{font-size:13px}
+.trackinfo small{font-size:11px;color:var(--muted);margin-top:4px}
+.trackactions{display:flex;gap:5px}
+.miniicon{background:transparent;color:var(--muted);padding:8px;font-size:17px}
+.miniicon.fav{color:#df72a8}
+.player{position:fixed;bottom:0;left:0;right:0;z-index:5;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(18px)}
+.playerinner{max-width:720px;margin:auto;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:22px;padding:13px}
+.playerrow{display:flex;align-items:center;gap:11px}
+.playercover{width:48px;height:48px;border-radius:15px;background:linear-gradient(135deg,#9a73e9,#d1b4ff);display:grid;place-items:center;color:white;font-size:20px;flex-shrink:0}
+.pmeta{flex:1;min-width:0}
+.pmeta strong,.pmeta small{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.pmeta strong{font-size:13px}
+.pmeta small{font-size:11px;color:var(--muted);margin-top:4px}
+.controls{display:flex;align-items:center;gap:7px}
+.ctrl{background:transparent;font-size:18px;padding:8px;color:var(--text)}
+.ctrl.play{background:var(--accent);color:white;border-radius:50%;width:43px;height:43px;display:grid;place-items:center;font-size:16px}
+.progressrow{display:flex;align-items:center;gap:8px;margin-top:9px}
+.time{font-size:10px;color:var(--muted);min-width:30px}
+input[type=range]{accent-color:var(--accent);height:4px;flex:1}
+.volume{display:none}
+@media(min-width:550px){.volume{display:flex;align-items:center;gap:7px;margin-top:9px;color:var(--muted);font-size:12px}}
+.modalhint{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5}
+input[type=file]{display:none}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--surface);color:var(--text);padding:12px 18px;border-radius:15px;box-shadow:var(--shadow);z-index:20;font-size:13px;display:none;max-width:90%;text-align:center}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+ <div class="brand">
+  <div class="logo">♫</div>
+  <div><h1>Nos Nard Music</h1><small>Твоя музыка. Твоё настроение.</small></div>
+ </div>
+ <button class="iconbtn" id="themeBtn" aria-label="Переключить тему">☀️</button>
+</header>
+<section class="hero">
+ <div class="tag">ТВОЯ ЛИЧНАЯ МУЗЫКА</div>
+ <h2>Музыка всегда с тобой ✨</h2>
+ <p>Собери свою библиотеку и слушай любимые треки в одном месте.</p>
+ <button class="upload" id="uploadBtn">＋ Добавить музыку</button>
+</section>
+<input type="file" id="fileInput" accept="audio/*" multiple>
+<div class="sectionhead"><h3>Моя библиотека</h3><span id="trackCount">0 треков</span></div>
+<input class="search" id="search" placeholder="⌕  Поиск по трекам или исполнителям">
+<div class="tabs">
+ <button class="tab active" id="allTab">Все треки</button>
+ <button class="tab" id="favTab">♡ Избранное</button>
+</div>
+<div id="list"></div>
+<p class="modalhint">Музыка хранится в памяти этого браузера на устройстве. Не закрывай и не очищай данные приложения, если хочешь сохранить библиотеку.</p>
+</div>
+<div class="player" id="player">
+ <div class="playerinner">
+  <div class="playerrow">
+   <div class="playercover" id="playerCover">♫</div>
+   <div class="pmeta"><strong id="playerTitle">Выбери трек</strong><small id="playerArtist">Здесь появится музыка</small></div>
+   <div class="controls">
+    <button class="ctrl" id="prev" aria-label="Предыдущий">⏮</button>
+    <button class="ctrl play" id="play" aria-label="Воспроизведение">▶</button>
+    <button class="ctrl" id="next" aria-label="Следующий">⏭</button>
+   </div>
+  </div>
+  <div class="progressrow">
+   <span class="time" id="currentTime">0:00</span>
+   <input type="range" id="seek" min="0" max="1000" value="0">
+   <span class="time" id="duration">0:00</span>
+  </div>
+  <div class="volume"><span>🔈</span><input type="range" id="vol" min="0" max="1" step=".01" value=".85"></div>
+ </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(() => {
+ const tg=window.Telegram?.WebApp;
+ try{tg?.ready();tg?.expand();}catch(e){}
+ const DB_NAME='nosnard_music_db',DB_VERSION=1,STORE='tracks';
+ let db,tracks=[],currentId=null,playing=false,favoritesOnly=false,query='';
+ const audio=new Audio();audio.volume=.85;
+ const $=id=>document.getElementById(id);
+ const openDB=()=>new Promise((resolve,reject)=>{
+  const req=indexedDB.open(DB_NAME,DB_VERSION);
+  req.onupgradeneeded=()=>{const d=req.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE,{keyPath:'id',autoIncrement:true});};
+  req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+ });
+ const tx=(mode)=>db.transaction(STORE,mode).objectStore(STORE);
+ const getAll=()=>new Promise((res,rej)=>{let r=tx('readonly').getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+ const addTrack=t=>new Promise((res,rej)=>{let r=tx('readwrite').add(t);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+ const updateTrack=t=>new Promise((res,rej)=>{let r=tx('readwrite').put(t);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)});
+ const deleteTrack=id=>new Promise((res,rej)=>{let r=tx('readwrite').delete(id);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)});
+ function toast(msg){const el=$('toast');el.textContent=msg;el.style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.style.display='none',2600);}
+ function fmt(s){if(!isFinite(s))return'0:00';return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0')}
+ function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+ function filtered(){return tracks.filter(t=>(!favoritesOnly||t.favorite)&&(`${t.title} ${t.artist}`).toLowerCase().includes(query.toLowerCase()))}
+ function render(){
+  const arr=filtered();$('trackCount').textContent=tracks.length+' '+(tracks.length===1?'трек':tracks.length<5?'трека':'треков');
+  const list=$('list');list.innerHTML='';
+  if(!arr.length){list.innerHTML=`<div class="empty"><div class="musicicon">♫</div><strong>${tracks.length?(favoritesOnly?'Пока нет избранного':'Ничего не найдено'):'Твоя библиотека пока пуста'}</strong><span>${tracks.length?'Попробуй изменить поиск или добавь любимые треки в избранное.':'Загрузи песни, чтобы начать слушать.'}</span></div>`;return;}
+  arr.forEach(t=>{
+   const el=document.createElement('div');el.className='track';
+   el.innerHTML=`<div class="cover">♫</div><div class="trackinfo"><strong>${esc(t.title)}</strong><small>${esc(t.artist)}${t.id===currentId&&playing?' · играет':''}</small></div><div class="trackactions"><button class="miniicon fav ${t.favorite?'':'notfav'}" title="Избранное">${t.favorite?'♥':'♡'}</button><button class="miniicon del" title="Удалить">⋯</button></div>`;
+   el.addEventListener('click',e=>{if(e.target.closest('.miniicon'))return;playTrack(t.id)});
+   el.querySelector('.fav').onclick=async e=>{e.stopPropagation();t.favorite=!t.favorite;await updateTrack(t);tracks=await getAll();render();};
+   el.querySelector('.del').onclick=async e=>{e.stopPropagation();if(t.id===currentId){audio.pause();audio.src='';currentId=null;playing=false;updatePlayer();}await deleteTrack(t.id);tracks=await getAll();render();toast('Трек удалён');};
+   list.appendChild(el);
+  });
+ }
+ async function playTrack(id){
+  const t=tracks.find(x=>x.id===id);if(!t)return;
+  if(currentId===id&&audio.src){if(audio.paused){await audio.play();playing=true;}else{audio.pause();playing=false;}updatePlayer();render();return;}
+  currentId=id;audio.src=URL.createObjectURL(t.blob);audio.play().then(()=>{playing=true;updatePlayer();render();}).catch(()=>{playing=false;updatePlayer();toast('Не удалось воспроизвести этот файл');});
+  updatePlayer();
+ }
+ function updatePlayer(){
+  const t=tracks.find(x=>x.id===currentId);
+  $('playerTitle').textContent=t?.title||'Выбери трек';$('playerArtist').textContent=t?.artist||'Здесь появится музыка';
+  $('play').textContent=playing?'❚❚':'▶';
+ }
+ async function loadFiles(files){
+  let count=0;
+  for(const f of files){
+   if(!f.type.startsWith('audio/'))continue;
+   let title=f.name.replace(/\.[^.]+$/,'').replace(/[_-]/g,' ').trim(),artist='Неизвестный исполнитель';
+   // Read basic ID3 tags for MP3 title/artist when available.
+   if(f.type==='audio/mpeg'||f.name.toLowerCase().endsWith('.mp3')){
+    try{const tags=await readID3(f);if(tags.title)title=tags.title;if(tags.artist)artist=tags.artist;}catch{}
+   }
+   await addTrack({title,artist,blob:f,type:f.type,favorite:false,added:Date.now()});count++;
+  }
+  tracks=await getAll();render();if(count)toast(`Добавлено треков: ${count}`);
+ }
+ function readID3(file){return new Promise(resolve=>{
+  const reader=new FileReader();reader.onload=()=>{try{
+   const b=new Uint8Array(reader.result);if(b.length<10||String.fromCharCode(...b.slice(0,3))!=='ID3')return resolve({});
+   const size=(b[6]<<21)|(b[7]<<14)|(b[8]<<7)|b[9];let p=10,end=Math.min(10+size,b.length),out={};
+   while(p+10<end){let id=String.fromCharCode(...b.slice(p,p+4));let n=(b[p+4]<<24)|(b[p+5]<<16)|(b[p+6]<<8)|b[p+7];if(!id.trim()||n<=0||p+10+n>end)break;
+    if(['TIT2','TPE1'].includes(id)){let d=b.slice(p+10,p+10+n),enc=d[0],txt=d.slice(1);let val;
+     if(enc===1||enc===2){val=new TextDecoder(enc===1?'utf-16':'utf-16be').decode(txt).replace(/\0/g,'').trim();}
+     else val=new TextDecoder('utf-8').decode(txt).replace(/\0/g,'').trim();
+     out[id==='TIT2'?'title':'artist']=val;
+    }p+=10+n;
+   }resolve(out);
+  }catch{resolve({})}};reader.onerror=()=>resolve({});reader.readAsArrayBuffer(file.slice(0,256*1024));
+ });}
+ $('uploadBtn').onclick=()=>$('fileInput').click();
+ $('fileInput').onchange=e=>loadFiles(e.target.files).then(()=>e.target.value='');
+ $('search').oninput=e=>{query=e.target.value;render()};
+ $('allTab').onclick=()=>{favoritesOnly=false;$('allTab').classList.add('active');$('favTab').classList.remove('active');render()};
+ $('favTab').onclick=()=>{favoritesOnly=true;$('favTab').classList.add('active');$('allTab').classList.remove('active');render()};
+ $('play').onclick=()=>{if(!currentId){if(tracks.length)playTrack(tracks[0].id);else toast('Сначала добавь музыку');}else playTrack(currentId)};
+ $('next').onclick=()=>{if(!tracks.length)return;let i=tracks.findIndex(t=>t.id===currentId);playTrack(tracks[(i+1)%tracks.length].id)};
+ $('prev').onclick=()=>{if(!tracks.length)return;if(audio.currentTime>3){audio.currentTime=0;return;}let i=tracks.findIndex(t=>t.id===currentId);playTrack(tracks[(i-1+tracks.length)%tracks.length].id)};
+ audio.onended=()=>{if(tracks.length){let i=tracks.findIndex(t=>t.id===currentId);playTrack(tracks[(i+1)%tracks.length].id)}};
+ audio.ontimeupdate=()=>{if(!audio.duration)return;$('seek').value=audio.currentTime/audio.duration*1000;$('currentTime').textContent=fmt(audio.currentTime);$('duration').textContent=fmt(audio.duration)};
+ $('seek').oninput=e=>{if(audio.duration)audio.currentTime=e.target.value/1000*audio.duration};
+ $('vol').oninput=e=>audio.volume=e.target.value;
+ const setTheme=t=>{document.documentElement.dataset.theme=t;$('themeBtn').textContent=t==='dark'?'☀️':'🌙';localStorage.setItem('nnmusic_theme',t)};
+ $('themeBtn').onclick=()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');
+ setTheme(localStorage.getItem('nnmusic_theme')||'dark');
+ openDB().then(async d=>{db=d;tracks=await getAll();render();}).catch(()=>toast('Хранилище недоступно в этом браузере'));
+})();
+</script>
+</body>
+</html>
