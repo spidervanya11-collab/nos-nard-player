@@ -53,6 +53,7 @@ button{border:0;cursor:pointer;color:inherit}
 .trackactions{display:flex;gap:5px}
 .miniicon{background:transparent;color:var(--muted);padding:8px;font-size:17px}
 .miniicon.fav{color:#df72a8}
+.miniicon.del{color:var(--muted)}.miniicon.del:active{color:#e35d83}
 .player{position:fixed;bottom:0;left:0;right:0;z-index:5;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(18px)}
 .playerinner{max-width:720px;margin:auto;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:22px;padding:13px}
 .playerrow{display:flex;align-items:center;gap:11px}
@@ -67,8 +68,7 @@ button{border:0;cursor:pointer;color:inherit}
 .progressrow{display:flex;align-items:center;gap:8px;margin-top:9px}
 .time{font-size:10px;color:var(--muted);min-width:30px}
 input[type=range]{accent-color:var(--accent);height:4px;flex:1}
-.volume{display:none}
-@media(min-width:550px){.volume{display:flex;align-items:center;gap:7px;margin-top:9px;color:var(--muted);font-size:12px}}
+.volume{display:flex;align-items:center;gap:9px;margin-top:10px;color:var(--muted);font-size:12px}.volume input[type=range]{width:100%;min-width:0}
 .modalhint{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5}
 input[type=file]{display:none}
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--surface);color:var(--text);padding:12px 18px;border-radius:15px;box-shadow:var(--shadow);z-index:20;font-size:13px;display:none;max-width:90%;text-align:center}
@@ -147,7 +147,7 @@ input[type=file]{display:none}
   if(!arr.length){list.innerHTML=`<div class="empty"><div class="musicicon">♫</div><strong>${tracks.length?(favoritesOnly?'Пока нет избранного':'Ничего не найдено'):'Твоя библиотека пока пуста'}</strong><span>${tracks.length?'Попробуй изменить поиск или добавь любимые треки в избранное.':'Загрузи песни, чтобы начать слушать.'}</span></div>`;return;}
   arr.forEach(t=>{
    const el=document.createElement('div');el.className='track';
-   el.innerHTML=`<div class="cover">♫</div><div class="trackinfo"><strong>${esc(t.title)}</strong><small>${esc(t.artist)}${t.id===currentId&&playing?' · играет':''}</small></div><div class="trackactions"><button class="miniicon fav ${t.favorite?'':'notfav'}" title="Избранное">${t.favorite?'♥':'♡'}</button><button class="miniicon del" title="Удалить">⋯</button></div>`;
+   el.innerHTML=`<div class="cover">♫</div><div class="trackinfo"><strong>${esc(t.title)}</strong><small>${esc(t.artist)}${t.id===currentId&&playing?' · играет':''}</small></div><div class="trackactions"><button class="miniicon fav ${t.favorite?'':'notfav'}" title="Избранное">${t.favorite?'♥':'♡'}</button><button class="miniicon del" title="Удалить трек" aria-label="Удалить трек">🗑️</button></div>`;
    el.addEventListener('click',e=>{if(e.target.closest('.miniicon'))return;playTrack(t.id)});
    el.querySelector('.fav').onclick=async e=>{e.stopPropagation();t.favorite=!t.favorite;await updateTrack(t);tracks=await getAll();render();};
    el.querySelector('.del').onclick=async e=>{e.stopPropagation();if(t.id===currentId){audio.pause();audio.src='';currentId=null;playing=false;updatePlayer();}await deleteTrack(t.id);tracks=await getAll();render();toast('Трек удалён');};
